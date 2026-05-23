@@ -9,24 +9,35 @@ Projects
 - `Sales.Services` — Application services and orchestration (use-cases).
 - `Sales.Utility` — Shared helpers and utilities used across the solution.
 - `Sales.Desktop.Manager` — WPF desktop client that consumes the API.
+- `Sales.Ai` — AI/ML helpers and integration layer. Contains services that call external AI providers (or local models) for features such as recommendations, classification, or natural language processing. Designed to be called from application services.
+- `Sales.MessageBroker` — Message broker integration and background workers. Hosts message contracts, producers, consumers, and wiring for a broker (RabbitMQ/Kafka/Service Bus). Used for async workflows and event-driven communication between services.
+- `Sales.Fulfillment` — Fulfillment and order-processing background service. Implements long-running workflows (shipping, inventory updates, external fulfillment provider integration) and typically runs as a worker service.
 
 High-level integration
 
 - `Sales.Api` depends on `Sales.Services`, `Sales.Domain`, and `Sales.Data` to serve HTTP requests.
 - `Sales.Data` depends on `Sales.Domain` for entity types and contains EF Core migrations; `Sales.Api` is the typical startup project for design-time EF operations.
 - `Sales.Desktop.Manager` is an independent WPF client that calls the API (default base URL `https://localhost:7282/api/` configured in `Sales.Desktop.Manager\App.config`).
+- `Sales.Ai` is invoked by application services (via `Sales.Services`) to provide AI-driven features such as recommendations or text processing. It is intentionally kept as an integration layer so the implementation can swap providers or models without changing core domain logic.
+- `Sales.MessageBroker` defines message contracts and contains producers/consumers used by `Sales.Api`, `Sales.Fulfillment`, and other background services to perform asynchronous work and decouple components.
+- `Sales.Fulfillment` subscribes to order/payment events (via the message broker or direct service calls) and handles fulfillment workflows, external provider calls, and inventory reconciliation. It can run as a hosted worker process or container.
 
 Prerequisites
 
 - .NET 10 SDK
 - Visual Studio 2026 or `dotnet` CLI
 - SQL Server or other EF Core provider if using a real database
+- Message broker (if using asynchronous features): RabbitMQ, Kafka, or Azure Service Bus depending on your configuration. Ensure the broker is running and connection settings are configured in appsettings or environment variables.
+- (Optional) AI provider credentials or local model runtime: configure API keys or model endpoints used by `Sales.Ai` via configuration or secrets.
 
 Build and run (recommended — Visual Studio)
 
 1. Open the solution in Visual Studio and restore NuGet packages.
 2. Set `Sales.Api` as the startup project and run it (F5). The API typically exposes Swagger at `https://localhost:{port}/swagger`.
-3. Set `Sales.Desktop.Manager` as the startup project and run the desktop app. Ensure `Sales.Api` is running and the `SalesApiUrl` in `Sales.Desktop.Manager\App.config` matches the API launch URL.
+3. If you use asynchronous features, start your message broker (RabbitMQ/Kafka/Service Bus) and ensure `Sales.MessageBroker`/worker consumers can reach it via configured connection strings.
+4. Start `Sales.Fulfillment` as a worker project (if configured to run locally) to process fulfillment jobs and consume messages.
+5. If AI features are required, ensure `Sales.Ai` configuration is set (API keys or model endpoints) before exercising AI-driven endpoints.
+6. Set `Sales.Desktop.Manager` as the startup project and run the desktop app. Ensure `Sales.Api` is running and the `SalesApiUrl` in `Sales.Desktop.Manager\App.config` matches the API launch URL.
 
 Build and run (command line)
 
