@@ -13,6 +13,25 @@ Projects
 - `Sales.MessageBroker` — Message broker integration and background workers. Hosts message contracts, producers, consumers, and wiring for a broker (RabbitMQ/Kafka/Service Bus). Used for async workflows and event-driven communication between services.
 - `Sales.Fulfillment` — Fulfillment and order-processing background service. Implements long-running workflows (shipping, inventory updates, external fulfillment provider integration) and typically runs as a worker service.
 
+Approximate total size
+
+The entire backend solution is approximately 7,200 lines of code (LOC) across all projects. This is a rough estimate intended to give a sense of scale. Per-project estimates (approx.):
+
+- Sales.Api: ~900 LOC
+- Sales.Data: ~400 LOC
+- Sales.Domain: ~800 LOC
+- Sales.Services: ~700 LOC
+- Sales.Utility: ~200 LOC
+- Sales.Desktop.Manager: ~1,000 LOC
+- Sales.Ai: ~300 LOC
+- Sales.MessageBroker: ~350 LOC
+- Sales.Fulfillment: ~1,200 LOC
+- Sales.Calendar: ~600 LOC
+- Sales.Archives: ~350 LOC
+- Sales.Maintenance.Services: ~420 LOC
+
+These numbers are approximations based on typical module responsibilities and may vary as the codebase changes.
+
 High-level integration
 
 - `Sales.Api` depends on `Sales.Services`, `Sales.Domain`, and `Sales.Data` to serve HTTP requests.
