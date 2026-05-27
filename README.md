@@ -28,7 +28,7 @@ The entire backend solution is approximately 7,200 lines of code (LOC) across al
 - Sales.Fulfillment: ~1,200 LOC
 - Sales.Calendar: ~600 LOC
 - Sales.Archives: ~350 LOC
-- Sales.Maintenance.Services: ~420 LOC
+- Sales.Maintenance: ~420 LOC
 
 These numbers are approximations based on typical module responsibilities and may vary as the codebase changes.
 
